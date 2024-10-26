@@ -26,16 +26,19 @@
 });
 
   // Xóa Habit theo ID
-  router.delete('/:id', async (req, res) => {
+  router.post('/delete/:id', async (req, res) => {
     try {
       const habit = await Habit.findByPk(req.params.id);
-      if (habit) {
-        await habit.destroy();
-        res.json({ message: 'Thói quen đã được xóa thành công.' });
-      } else {
-        res.status(404).json({ error: 'Không tìm thấy thói quen.' });
+      if (!habit) {
+        return res.status(404).json({ error: 'Không tìm thấy thói quen.' });
       }
+      
+      await habit.destroy();
+
+      res.redirect('/api/habits'); // Chuyển hướng đến route danh sách thói quen
+
     } catch (error) {
+      console.error('Lỗi khi xóa thói quen:', error); // Log chi tiết lỗi
       res.status(500).json({ error: 'Lỗi khi xóa thói quen.' });
     }
   });
@@ -65,7 +68,7 @@ router.get('/:id/edit', async (req, res) => {
 });
 
 // Cập nhật Habit theo ID
-router.put('/:id', async (req, res) => {
+router.post('/update/:id', async (req, res) => {
   try {
     const habit = await Habit.findByPk(req.params.id);
     if (habit) {

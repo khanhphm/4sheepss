@@ -13,7 +13,7 @@
         <h1 class="text-2xl">Chỉnh Sửa Thói Quen</h1>
     </header>
     <main class="p-4">
-        <form action="/api/habits/<%= habit.id %>" method="PUT">
+        <form action="/api/habits/update/<%= habit.id %>" method="POST">
             <input type="text" name="name" value="<%= habit.name %>" class="border p-2 mb-2 w-full" />
             <input type="text" name="frequency" value="<%= habit.frequency %>" class="border p-2 mb-2 w-full" />
             <input type="number" name="targetCount" value="<%= habit.targetCount %>" class="border p-2 mb-2 w-full" />

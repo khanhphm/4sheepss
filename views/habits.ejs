@@ -30,7 +30,7 @@
                 <p><strong>Tần suất:</strong> <%= habit.frequency %></p>
                 <p><strong>Số lần mục tiêu:</strong> <%= habit.targetCount %></p>
                 <a href="/api/habits/<%= habit.id %>/edit" class="text-blue-500">Chỉnh sửa</a>
-                <form action="/api/habits/<%= habit.id %>?_method=DELETE" method="POST" class="inline">
+                <form action="/api/habits/delete/<%= habit.id %>?_method=POST" method="POST" class="inline">
                     <button type="submit" class="text-red-500">Xóa</button>
                 </form>
             </li>
