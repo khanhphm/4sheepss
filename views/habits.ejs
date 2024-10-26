@@ -42,7 +42,7 @@
                 <p><strong>Số lần mục tiêu:</strong> <%= habit.targetCount %></p>
                 <div class="mt-4 flex space-x-2">
                     <a href="/api/habits/<%= habit.id %>/edit" class="text-blue-500 hover:text-blue-600 transition"><i class="fas fa-edit"></i> Chỉnh sửa</a>
-                    <form action="/api/habits/<%= habit.id %>?_method=DELETE" method="POST" class="inline">
+                    <form action="/api/habits/delete/<%= habit.id %>?_method=POST" method="POST" class="inline">
                         <button type="submit" class="text-red-500 hover:text-red-600 transition"><i class="fas fa-trash-alt"></i> Xóa</button>
                     </form>
                 </div>
