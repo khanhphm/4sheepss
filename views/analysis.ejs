@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phân Tích</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Thêm Chart.js -->
+</head>
+
+<body>
+    <nav class="bg-gray-800 shadow-lg mb-8">
+        <div class="flex justify-around p-4">
+            <a href="/habit" class="text-white hover:text-blue-300">Habit</a>
+            <a href="/analysis" class="text-white hover:text-blue-300">Analysis</a>
+            <a href="/about" class="text-white hover:text-blue-300">About</a>
+        </div>
+    </nav>
+
+    <h1 class="text-4xl font-bold text-center mb-10">Phân Tích Thói Quen</h1>
+
+    <!-- Biểu đồ tiến độ hoàn thành task -->
+    <div class="container mx-auto">
+        <canvas id="taskChart" width="400" height="200"></canvas>
+    </div>
+
+    <script>
+        // Dữ liệu mẫu cho biểu đồ
+        const labels = ['Task 1', 'Task 2', 'Task 3', 'Task 4', 'Task 5'];
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'Tiến độ hoàn thành (%)',
+                data: [80, 55, 90, 70, 60], // Thay thế bằng dữ liệu thực tế của bạn
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+            }]
+        };
+
+        const config = {
+            type: 'bar', // Thay đổi loại biểu đồ nếu cần
+            data: data,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Tiến độ hoàn thành (%)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Các task'
+                        }
+                    }
+                }
+            }
+        };
+
+        const taskChart = new Chart(
+            document.getElementById('taskChart'),
+            config
+        );
+    </script>
+</body>
+
+</html>
