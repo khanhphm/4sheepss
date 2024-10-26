@@ -14,15 +14,15 @@ const Habit = sequelize.define('Habit', {
   frequency: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'daily', // Options can include 'daily', 'weekly', 'monthly', etc.
+    defaultValue: 'daily', // Các tùy chọn có thể là 'daily', 'weekly', 'monthly', v.v.
   },
   targetCount: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 1, // The number of times the target needs to be achieved
+    defaultValue: 1, // Số lần cần đạt được mục tiêu
   },
 }, {
-  timestamps: true, // Automatically creates createdAt and updatedAt fields
+  timestamps: true, // Tự động tạo trường createdAt và updatedAt
 });
 
 export default Habit;

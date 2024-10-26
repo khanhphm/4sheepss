@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh Sửa Thói Quen</title>
+    <link href="/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-600 text-white p-4">
+        <h1 class="text-2xl">Chỉnh Sửa Thói Quen</h1>
+    </header>
+    <main class="p-4">
+        <form action="/api/habits/<%= habit.id %>" method="PUT">
+            <input type="text" name="name" value="<%= habit.name %>" class="border p-2 mb-2 w-full" />
+            <input type="text" name="frequency" value="<%= habit.frequency %>" class="border p-2 mb-2 w-full" />
+            <input type="number" name="targetCount" value="<%= habit.targetCount %>" class="border p-2 mb-2 w-full" />
+            <button type="submit" class="bg-blue-600 text-white p-2">Cập nhật thói quen</button>
+        </form>
+    </main>
+</body>
+</html>
