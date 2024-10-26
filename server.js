@@ -1,22 +1,23 @@
 import express from 'express';
 import path from 'path';
+import sequelize from './database.js';
+import userRoutes from './routes/userRoutes.js';
+import bodyParser from 'body-parser';
 
 const app = express();
+const PORT = 3000;
 
-// Cấu hình EJS làm view engine
+// Cấu hình view engine EJS và thư mục tĩnh
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
+app.use(express.static(path.join(process.cwd(), 'public'))); // Cấu hình thư mục public
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Middleware để sử dụng CSS từ thư mục public
-app.use(express.static(path.join(process.cwd(), 'public')));
+// Route chính và API user
+app.get('/', (req, res) => res.render('index'));
+app.use('/users', userRoutes);
 
-// Route chính
-app.get('/', (req, res) => {
-  res.render('index'); // Render file index.ejs
-});
-
-// Khởi động server
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// Đồng bộ models với cơ sở dữ liệu
+sequelize.sync().then(() => {
+  app.listen(PORT, () => console.log(`Server đang chạy tại http://localhost:${PORT}`));
 });
