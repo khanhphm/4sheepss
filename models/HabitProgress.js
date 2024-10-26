@@ -1,7 +1,7 @@
 // models/HabitProgress.js
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-const Habit = require('./Habit');
+import { DataTypes } from 'sequelize';
+import sequelize from '../database.js';
+import Habit from './Habit.js'; // Use ES6 import for Habit
 
 const HabitProgress = sequelize.define('HabitProgress', {
   date: {
@@ -11,18 +11,18 @@ const HabitProgress = sequelize.define('HabitProgress', {
   count: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 1, // Số lần hoàn thành trong ngày
+    defaultValue: 1, // Number of times completed in a day
   },
   completed: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false, // true nếu thói quen đã hoàn thành theo yêu cầu trong ngày
+    defaultValue: false, // true if the habit is completed as required for the day
   },
 }, {
   timestamps: true,
 });
 
-// Định nghĩa quan hệ: Mỗi Habit có nhiều HabitProgress
+// Define relationships: Each Habit can have many HabitProgress entries
 Habit.hasMany(HabitProgress, { foreignKey: 'habitId', onDelete: 'CASCADE' });
 HabitProgress.belongsTo(Habit, { foreignKey: 'habitId' });
 
-module.exports = HabitProgress;
+export default HabitProgress; // Use ES6 export
