@@ -12,6 +12,24 @@
         body {
             background: linear-gradient(to right, #f8fafc, #e0f2fe);
         }
+        .chart-container {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        .chart-wrapper {
+            width: 400px; /* Tăng kích thước biểu đồ */
+            height: 300px; /* Tăng kích thước biểu đồ */
+        }
+        .habit-list {
+            display: flex;
+            flex-wrap: wrap; /* Cho phép các box thói quen xuống hàng */
+            gap: 1rem; /* Khoảng cách giữa các box */
+        }
+        .habit-item {
+            flex: 1 1 calc(50% - 1rem); /* Chia đều 2 cột */
+            min-width: 250px; /* Đảm bảo kích thước tối thiểu cho mỗi box */
+        }
     </style>
 </head>
 <body class="p-8">
@@ -20,70 +38,105 @@
         <p class="mt-2">Quản lý thói quen hàng ngày của bạn!</p>
     </header>
 
-    <canvas id="habitChart" class="mb-8"></canvas>
+    <div class="chart-container mb-8">
+        <div>
+            <form action="/api/habits" method="POST" class="mb-4 flex space-x-4">
+                <input type="text" name="name" placeholder="Tên thói quen" required class="border p-2 flex-1 rounded-lg shadow-lg transition transform hover:scale-105">
+                <select name="frequency" class="border p-2 rounded-lg shadow-lg transition transform hover:scale-105" required>
+                    <option value="daily">Hằng ngày</option>
+                    <option value="weekly">Hằng tuần</option>
+                    <option value="monthly">Hằng tháng</option>
+                </select>
+                <input type="number" name="targetCount" placeholder="Số lần đạt được" required class="border p-2 rounded-lg shadow-lg transition transform hover:scale-105">
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded-lg shadow-lg hover:bg-blue-600 transition transform hover:scale-105">Thêm thói quen</button>
+            </form>
+            <ul class="habit-list">
+                <% habits.forEach(habit => { %>
+                    <li class="habit-item bg-white p-4 rounded-lg shadow-lg hover:shadow-2xl transition transform hover:scale-105">
+                        <h2 class="text-2xl font-semibold text-blue-600"><%= habit.name %></h2>
+                        <p><strong>Mô tả:</strong> <%= habit.description || 'Không có mô tả' %></p>
+                        <p><strong>Tần suất:</strong> <%= habit.frequency %></p>
+                        <p><strong>Số lần mục tiêu:</strong> <%= habit.targetCount %></p>
+                        <div class="mt-4 flex space-x-2">
+                            <a href="/api/habits/<%= habit.id %>/edit" class="text-blue-500 hover:text-blue-600 transition"><i class="fas fa-edit"></i> Chỉnh sửa</a>
+                            <form action="/api/habits/delete/<%= habit.id %>?_method=POST" method="POST" class="inline">
+                                <button type="submit" class="text-red-500 hover:text-red-600 transition"><i class="fas fa-trash-alt"></i> Xóa</button>
+                            </form>
+                        </div>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
 
-    <form action="/api/habits" method="POST" class="mb-4 flex space-x-4">
-        <input type="text" name="name" placeholder="Tên thói quen" required class="border p-2 flex-1 rounded-lg shadow-lg transition transform hover:scale-105">
-        <select name="frequency" class="border p-2 rounded-lg shadow-lg transition transform hover:scale-105" required>
-            <option value="daily">Hằng ngày</option>
-            <option value="weekly">Hằng tuần</option>
-            <option value="monthly">Hằng tháng</option>
-        </select>
-        <input type="number" name="targetCount" placeholder="Số lần đạt được" required class="border p-2 rounded-lg shadow-lg transition transform hover:scale-105">
-        <button type="submit" class="bg-blue-500 text-white p-2 rounded-lg shadow-lg hover:bg-blue-600 transition transform hover:scale-105">Thêm thói quen</button>
-    </form>
-
-    <ul class="space-y-4">
-        <% habits.forEach(habit => { %>
-            <li class="bg-white p-4 rounded-lg shadow-lg hover:shadow-2xl transition transform hover:scale-105">
-                <h2 class="text-2xl font-semibold text-blue-600"><%= habit.name %></h2>
-                <p><strong>Mô tả:</strong> <%= habit.description || 'Không có mô tả' %></p>
-                <p><strong>Tần suất:</strong> <%= habit.frequency %></p>
-                <p><strong>Số lần mục tiêu:</strong> <%= habit.targetCount %></p>
-                <div class="mt-4 flex space-x-2">
-                    <a href="/api/habits/<%= habit.id %>/edit" class="text-blue-500 hover:text-blue-600 transition"><i class="fas fa-edit"></i> Chỉnh sửa</a>
-                    <form action="/api/habits/delete/<%= habit.id %>?_method=POST" method="POST" class="inline">
-                        <button type="submit" class="text-red-500 hover:text-red-600 transition"><i class="fas fa-trash-alt"></i> Xóa</button>
-                    </form>
-                </div>
-            </li>
-        <% }) %>
-    </ul>
+        <!-- Biểu đồ thống kê -->
+        <div class="chart-wrapper">
+            <canvas id="habitChart"></canvas>
+        </div>
+    </div>
 
     <footer class="mt-10 text-center">
         <p class="text-gray-500">&copy; 2024 Quản lý thói quen. Tất cả quyền được bảo lưu.</p>
     </footer>
 
     <script>
-        const ctx = document.getElementById('habitChart').getContext('2d');
-        const habitChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Hằng ngày', 'Hằng tuần', 'Hằng tháng'], // Thay đổi theo tần suất thói quen của bạn
-                datasets: [{
-                    label: 'Số thói quen',
-                    data: [12, 5, 3], // Số liệu mẫu, hãy cập nhật với dữ liệu thực tế
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+        // Giả lập dữ liệu thói quen
+        const habits = [
+            { name: "Đọc sách", frequency: "daily", targetCount: 10 },
+            { name: "Tập thể dục", frequency: "daily", targetCount: 15 },
+            { name: "Gặp gỡ bạn bè", frequency: "weekly", targetCount: 5 },
+            { name: "Viết nhật ký", frequency: "weekly", targetCount: 3 },
+            { name: "Đi du lịch", frequency: "monthly", targetCount: 1 },
+            { name: "Học ngoại ngữ", frequency: "daily", targetCount: 7 },
+            { name: "Nấu ăn", frequency: "monthly", targetCount: 2 },
+            { name: "Tham gia hội thảo", frequency: "monthly", targetCount: 2 },
+            { name: "Chạy bộ", frequency: "daily", targetCount: 12 }
+        ];
+    
+        // Thống kê số lượng thói quen theo tần suất
+        const frequencyCount = { daily: 0, weekly: 0, monthly: 0 };
+        habits.forEach(habit => {
+            if (habit.frequency in frequencyCount) {
+                frequencyCount[habit.frequency]++;
             }
         });
+    
+        // Tạo biểu đồ với dữ liệu động
+        const ctx = document.getElementById('habitChart');
+        if (ctx) {
+            const habitChart = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Hằng ngày', 'Hằng tuần', 'Hằng tháng'],
+                    datasets: [{
+                        label: 'Số thói quen',
+                        data: [frequencyCount.daily, frequencyCount.weekly, frequencyCount.monthly],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(153, 102, 255, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1 // Đặt bước nhảy để dữ liệu trông hợp lý hơn
+                            }
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
